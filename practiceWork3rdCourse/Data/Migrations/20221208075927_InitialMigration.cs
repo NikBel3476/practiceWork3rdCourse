@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace practiceWork3rdCourse.Data.Migrations
 {
     /// <inheritdoc />
@@ -166,17 +168,43 @@ namespace practiceWork3rdCourse.Data.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateToUnpin = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Posts_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Posts_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "Admin", null, "Admin", "ADMIN" },
+                    { "User", null, "User", "USER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "534533ac-e2fc-467d-bd0a-941faed3e29a", 0, "92934050-159e-4ea0-886e-106cc991db3c", "admin@gmail.com", true, "Amit", "Naik", false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEEMERfwFHwjUKWd3OE2k9Yv92fuBYUueDSEDIo+FT73MnRLMHtlRS2P8QAx0m4189Q==", null, true, "2d0c4fab-411c-4e64-b944-b72cc3bcdfa5", false, "admin@gmail.com" },
+                    { "ee3477c1-ded5-4362-8342-6d932e2b5a78", 0, "fb10e7b8-9594-442e-a7a5-ee636782fbb0", "user@gmail.com", true, null, null, false, null, "USER@GMAIL.COM", "USER", "AQAAAAIAAYagAAAAEN0ACH7Otu6T0Wr18M3YLjHUfM6kskCB57bUVj43gOYK6bGyoXvQxgttwBq43J1Sng==", null, true, "DMSXK5UGNJK2CUJU764GFRUS3TRTULXQ", false, "user@gmail.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "Admin", "534533ac-e2fc-467d-bd0a-941faed3e29a" },
+                    { "User", "ee3477c1-ded5-4362-8342-6d932e2b5a78" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -219,9 +247,9 @@ namespace practiceWork3rdCourse.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_UserId",
+                name: "IX_Posts_AuthorId",
                 table: "Posts",
-                column: "UserId");
+                column: "AuthorId");
         }
 
         /// <inheritdoc />

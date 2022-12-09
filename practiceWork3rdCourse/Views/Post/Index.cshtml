@@ -25,7 +25,7 @@
                 @Html.DisplayNameFor(model => model.DateToUnpin)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User.FirstName)
+                @Html.DisplayNameFor(model => model.Author.UserName)
             </th>
             <th></th>
         </tr>
@@ -46,7 +46,7 @@
                 @Html.DisplayFor(modelItem => item.DateToUnpin)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.User.FirstName)
+                @Html.DisplayFor(modelItem => item.Author.UserName)
             </td>
             @*<td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using practiceWork3rdCourse.Data;
 
@@ -11,9 +12,11 @@ using practiceWork3rdCourse.Data;
 namespace practiceWork3rdCourse.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221208075927_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -200,9 +203,6 @@ namespace practiceWork3rdCourse.Data.Migrations
                     b.Property<DateTime>("DateOfCreation")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateToUnpin")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -305,7 +305,7 @@ namespace practiceWork3rdCourse.Data.Migrations
                         {
                             Id = "534533ac-e2fc-467d-bd0a-941faed3e29a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "74b3c176-a518-4078-aa36-b07a912d9e72",
+                            ConcurrencyStamp = "92934050-159e-4ea0-886e-106cc991db3c",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Amit",
@@ -315,7 +315,7 @@ namespace practiceWork3rdCourse.Data.Migrations
                             NormalizedUserName = "ADMIN",
                             PasswordHash = "AQAAAAIAAYagAAAAEEMERfwFHwjUKWd3OE2k9Yv92fuBYUueDSEDIo+FT73MnRLMHtlRS2P8QAx0m4189Q==",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "7063b920-3ccb-4dda-8270-512f46f6cf16",
+                            SecurityStamp = "2d0c4fab-411c-4e64-b944-b72cc3bcdfa5",
                             TwoFactorEnabled = false,
                             UserName = "admin@gmail.com"
                         });

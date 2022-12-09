@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using practiceWork3rdCourse.Models;
 
 namespace practiceWork3rdCourse.Data.Repositories;
@@ -6,7 +7,7 @@ namespace practiceWork3rdCourse.Data.Repositories;
 public class PostRepository: IRepository<Post>
 {
     private readonly ApplicationDbContext _context;
-    
+
     public PostRepository(ApplicationDbContext context)
     {
         _context = context;
@@ -14,24 +15,38 @@ public class PostRepository: IRepository<Post>
     
     public IEnumerable<Post> GetAll()
     {
-        return _context.Posts.Include(p => p.User);
+        var rawPostsDbSet = _context.Posts;
+        // ...
+                
+        var postsWithDateToUnpin = rawPostsDbSet
+            .Where(post =>
+                post.DateToUnpin != null && post.DateToUnpin >= DateTime.Now)
+            .OrderByDescending(p => p.DateOfCreation)
+            .Include(p => p.Author)
+            .ToList();
+        
+        var postsWithoutDateToUnpin = rawPostsDbSet
+            .Where(post =>
+                post.DateToUnpin == null || post.DateToUnpin < DateTime.Now)
+            .OrderByDescending(p => p.DateOfCreation)
+            .Include(p => p.Author)
+            .ToList();
+        
+        var posts = postsWithDateToUnpin.Concat(postsWithoutDateToUnpin);
+        return posts;
     }
 
     public Post? Get(string id)
     {
         return _context.Posts
             .Where(p => p.Id == id)
-            .Include(p => p.User)
+            .Include(p => p.Author)
             .FirstOrDefault();
     }
 
     public void Create(Post post)
     {
-        var existingPost = _context.Posts.Find(post.Id);
-        if (existingPost == null)
-        {
-            _context.Posts.Add(post);
-        }
+        _context.Posts.Add(post);
     }
 
     public void Update(Post post)

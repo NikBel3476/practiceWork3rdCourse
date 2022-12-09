@@ -10,31 +10,34 @@ namespace practiceWork3rdCourse.Controllers;
 [Authorize]
 public class PostController : Controller
 {
-    private readonly ILogger<PostController> _logger;
+    // ...
     private readonly UnitOfWork _unitOfWork;
     private readonly UserManager<User> _userManager;
 
     public PostController(
-        ILogger<PostController> logger,
+        // ...
         ApplicationDbContext context,
         UserManager<User> userManager
     )
     {
-        _logger = logger;
+        // ...
         _unitOfWork = new UnitOfWork(context);
         _userManager = userManager;
     }
 
-    public IActionResult Index()
-    {
-        var posts =  _unitOfWork.Posts.GetAll();
-        ViewData.Model = posts;
-        return View();
-    }
+public IActionResult Index()
+{
+    var posts =  _unitOfWork.Posts.GetAll();
+    // ...
+
+    ViewData.Model = posts;
+    return View();
+}
     
     // GET: Post/Create
     public ActionResult Create()
     {
+        // ...
         return View();
     }
     
@@ -51,11 +54,15 @@ public class PostController : Controller
             {
                 return BadRequest();
             }
-            
+            // ...
+
+            post.Id = Guid.NewGuid().ToString();
+            post.Author = user;
             post.DateOfCreation = DateTime.Now;
+            
             _unitOfWork.Posts.Create(post);
             _unitOfWork.Save();
-    
+
             return RedirectToAction(nameof(Index));
         }
         catch
@@ -67,18 +74,37 @@ public class PostController : Controller
     // GET: Post/Edit/5
     public ActionResult Edit(int id)
     {
+        // ...
         return View();
     }
     
     // POST: User/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Edit(int id, IFormCollection collection)
+    public ActionResult Edit(string id, Post updatedPost)
     {
         try
         {
-            // TODO: Add update logic here
-    
+            var userId = this._userManager.GetUserId(HttpContext.User);
+            var user = _unitOfWork.Users.Get(userId);
+            var originPost = _unitOfWork.Posts.Get(id);
+            
+            if (originPost == null || !this.IsValid(updatedPost, user))
+            {
+                return BadRequest();
+            }
+            // ...
+
+            updatedPost.Id = originPost.Id;
+            updatedPost.Author = originPost.Author;
+            if (!_userManager.IsInRoleAsync(user, "Admin").Result)
+            {
+                updatedPost.DateToUnpin = originPost.DateToUnpin;
+            }
+
+            _unitOfWork.Posts.Update(updatedPost);
+            _unitOfWork.Save();
+            
             return RedirectToAction(nameof(Index));
         }
         catch
@@ -93,13 +119,14 @@ public class PostController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
     
-    public bool IsValid(Post post, User user)
+    private bool IsValid(Post post, User user)
     {
+        var userIsAdmin = _userManager.IsInRoleAsync(user, "Admin").Result;
         if (
             string.IsNullOrEmpty(post.Title)
             || string.IsNullOrEmpty(post.Content)
-            || (post.DateToUnpin != null && User.IsInRole("Admin"))
-            || post.DateToUnpin < DateTime.Now.AddDays(1)
+            || (post.DateToUnpin != null && !userIsAdmin)
+            || post.DateToUnpin < DateTime.Now
         )
         {
             return false;

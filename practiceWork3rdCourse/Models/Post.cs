@@ -8,7 +8,9 @@ public class Post
     public string Title { get; set; }
     public string Content { get; set; }
     public DateTime DateOfCreation { get; set; }
+    // ...
     public DateTime? DateToUnpin { get; set; }
+    // ...
     [JsonIgnore]
-    public User User { get; set; }
+    public User Author { get; set; }
 }

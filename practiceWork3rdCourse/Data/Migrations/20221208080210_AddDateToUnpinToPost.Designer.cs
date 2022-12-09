@@ -12,8 +12,8 @@ using practiceWork3rdCourse.Data;
 namespace practiceWork3rdCourse.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221207191015_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20221208080210_AddDateToUnpinToPost")]
+    partial class AddDateToUnpinToPost
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,20 @@ namespace practiceWork3rdCourse.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "User",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "Admin",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -139,6 +153,18 @@ namespace practiceWork3rdCourse.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "ee3477c1-ded5-4362-8342-6d932e2b5a78",
+                            RoleId = "User"
+                        },
+                        new
+                        {
+                            UserId = "534533ac-e2fc-467d-bd0a-941faed3e29a",
+                            RoleId = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -167,6 +193,9 @@ namespace practiceWork3rdCourse.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -181,12 +210,9 @@ namespace practiceWork3rdCourse.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Posts");
                 });
@@ -260,6 +286,42 @@ namespace practiceWork3rdCourse.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ee3477c1-ded5-4362-8342-6d932e2b5a78",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "fb10e7b8-9594-442e-a7a5-ee636782fbb0",
+                            Email = "user@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER@GMAIL.COM",
+                            NormalizedUserName = "USER",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN0ACH7Otu6T0Wr18M3YLjHUfM6kskCB57bUVj43gOYK6bGyoXvQxgttwBq43J1Sng==",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "DMSXK5UGNJK2CUJU764GFRUS3TRTULXQ",
+                            TwoFactorEnabled = false,
+                            UserName = "user@gmail.com"
+                        },
+                        new
+                        {
+                            Id = "534533ac-e2fc-467d-bd0a-941faed3e29a",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "74b3c176-a518-4078-aa36-b07a912d9e72",
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "Amit",
+                            LastName = "Naik",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GMAIL.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEMERfwFHwjUKWd3OE2k9Yv92fuBYUueDSEDIo+FT73MnRLMHtlRS2P8QAx0m4189Q==",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "7063b920-3ccb-4dda-8270-512f46f6cf16",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -315,11 +377,11 @@ namespace practiceWork3rdCourse.Data.Migrations
 
             modelBuilder.Entity("practiceWork3rdCourse.Models.Post", b =>
                 {
-                    b.HasOne("practiceWork3rdCourse.Models.User", "User")
+                    b.HasOne("practiceWork3rdCourse.Models.User", "Author")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("AuthorId");
 
-                    b.Navigation("User");
+                    b.Navigation("Author");
                 });
 #pragma warning restore 612, 618
         }
